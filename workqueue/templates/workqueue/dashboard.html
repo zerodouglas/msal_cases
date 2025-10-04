@@ -1,0 +1,80 @@
+{% extends "workqueue/base.html" %}
+{% load tz %}
+{% block title %}My Cases{% endblock %}
+{% block content %}
+  <h1 class="usa-heading">Welcome, {{ officer }}</h1>
+  <p class="usa-intro">
+    Reports are due within <strong>10 days</strong> per policy.
+    Cases going to the DA may have stricter deadlines.
+  </p>
+  <p>
+  <a class="usa-button" href="{% url 'case_create' %}">New Case</a>
+</p>
+
+
+  {% if cases %}
+  <div class="grid-row grid-gap">
+    {% for c in cases %}
+      <div class="tablet:grid-col-6 desktop:grid-col-4 fade-in">
+        <article class="usa-card card {% if c.severity >= 5 %}pulse{% endif %}" style="border-left:8px solid
+           {% if c.severity == 5 %}var(--critical)
+           {% elif c.severity == 4 %}var(--high)
+           {% elif c.severity == 3 %}var(--elevated)
+           {% elif c.severity == 2 %}var(--moderate)
+           {% else %}var(--low){% endif %};">
+          <div class="usa-card__container">
+            <header class="usa-card__header">
+              <h2 class="usa-card__heading" style="margin-bottom:.25rem;">
+                Case #{{ c.id }} – {{ c.title }}
+              </h2>
+              <div>
+                <span class="badge" style="background:#f1f3f6;">
+                  Severity:
+                  <strong style="color:
+                    {% if c.severity == 5 %}var(--critical)
+                    {% elif c.severity == 4 %}var(--high)
+                    {% elif c.severity == 3 %}var(--elevated)
+                    {% elif c.severity == 2 %}var(--moderate)
+                    {% else %}var(--low){% endif %};">
+                    {{ c.get_severity_display }}
+                  </strong>
+                </span>
+                {% if c.going_to_da %}
+                  <span class="badge" style="background:rgba(84,39,143,.1); color:var(--da);">
+                    DA-bound
+                  </span>
+                {% endif %}
+              </div>
+            </header>
+            <div class="usa-card__body">
+              <p class="usa-prose">{{ c.description|default:"No description." }}</p>
+              <ul class="usa-list">
+                <li><strong>Assigned:</strong> {{ c.assigned_at|date:"M j, Y" }}</li>
+                <li>
+                  <strong>Due:</strong>
+                  {{ c.effective_due_at|date:"M j, Y, g:i a" }}
+                  ({{ c.effective_due_at|timeuntil:now }} remaining)
+                </li>
+                <li><strong>Status:</strong> {{ c.get_status_display }}</li>
+              </ul>
+            </div>
+            <footer class="usa-card__footer">
+              <form method="post" action="/complete/{{ c.id }}/">
+                {% csrf_token %}
+                <button class="usa-button">Mark Report Complete</button>
+              </form>
+            </footer>
+          </div>
+        </article>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <div class="usa-alert usa-alert--info" role="status">
+      <div class="usa-alert__body">
+        <h3 class="usa-alert__heading">No open cases</h3>
+        <p class="usa-alert__text">You're all caught up! 🎉</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

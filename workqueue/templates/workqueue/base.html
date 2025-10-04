@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Case Prioritization{% endblock %}</title>
+
+  <!-- USWDS (U.S. Web Design System) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@uswds/uswds@3.7.1/dist/css/uswds.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@uswds/uswds@3.7.1/dist/js/uswds-init.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@uswds/uswds@3.7.1/dist/js/uswds.min.js"></script>
+
+  <style>
+    :root {
+      --critical:#b50909;
+      --high:#d54309;
+      --elevated:#f29306;
+      --moderate:#f9c642;
+      --low:#2e8540;
+      --da:#54278f;
+    }
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.08);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      padding:.2rem .5rem;
+      border-radius:999px;
+      font-size:.8rem;
+      font-weight:600;
+    }
+    .pulse { position:relative; }
+    .pulse::after {
+      content:"";
+      position:absolute;
+      inset:-6px;
+      border-radius:16px;
+      border:2px solid currentColor;
+      opacity:.25;
+      animation:pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%   { transform:scale(.98); opacity:.35 }
+      70%  { transform:scale(1.05); opacity:.06 }
+      100% { transform:scale(1.1);  opacity:0 }
+    }
+    .fade-in { animation: fadein .3s ease; }
+    @keyframes fadein {
+      from { opacity:0; transform:translateY(4px); }
+      to   { opacity:1; transform:none; }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="usa-template usa-layout-docs">
+  <header class="usa-header usa-header--extended">
+    <div class="usa-navbar">
+      <div class="usa-logo" id="logo">
+        <em class="usa-logo__text">
+          <a href="/" title="Home">Case Prioritization</a>
+        </em>
+      </div>
+      <div class="usa-header__secondary-nav">
+        <ul class="usa-nav__secondary-links">
+          <li class="usa-nav__secondary-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+          <li class="usa-nav__secondary-item"><a href="{% url 'case_create' %}">New Case</a></li>
+          <li class="usa-nav__secondary-item"><a href="/logout/">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="usa-section">
+    <div class="grid-container">
+      {% if messages %}
+      <div class="usa-alert-group">
+        {% for message in messages %}
+        <div class="usa-alert usa-alert--{{ message.tags }}">
+          <div class="usa-alert__body">
+            <p class="usa-alert__text">{{ message }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="usa-footer">
+    <div class="grid-container usa-footer__return-to-top">
+      <a href="#top">Return to top</a>
+    </div>
+    <div class="grid-container">
+      <p class="usa-footer__secondary-section">© {{ now|date:"Y" }} Your Department</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends "workqueue/base.html" %}
+{% block title %}New Case{% endblock %}
+{% block content %}
+<h1 class="usa-heading">Create a New Case</h1>
+
+<form method="post" class="usa-form">
+  {% csrf_token %}
+
+  <div class="usa-form-group">
+    <label class="usa-label" for="{{ form.title.id_for_label }}">Title</label>
+    {{ form.title }}
+    {% if form.title.errors %}<span class="usa-error-message">{{ form.title.errors.0 }}</span>{% endif %}
+  </div>
+
+  <div class="usa-form-group">
+    <label class="usa-label" for="{{ form.description.id_for_label }}">Description</label>
+    {{ form.description }}
+    {% if form.description.errors %}<span class="usa-error-message">{{ form.description.errors.0 }}</span>{% endif %}
+  </div>
+
+  <div class="usa-form-group">
+    <label class="usa-label" for="{{ form.severity.id_for_label }}">Severity</label>
+    {{ form.severity }}
+    {% if form.severity.errors %}<span class="usa-error-message">{{ form.severity.errors.0 }}</span>{% endif %}
+  </div>
+
+  <fieldset class="usa-fieldset">
+    <legend class="usa-legend">District Attorney</legend>
+    <div class="usa-checkbox">
+      {{ form.going_to_da }} <label class="usa-checkbox__label" for="{{ form.going_to_da.id_for_label }}">Going to DA</label>
+    </div>
+    <div class="usa-form-group">
+      <label class="usa-label" for="{{ form.da_due_at.id_for_label }}">DA Due at</label>
+      {{ form.da_due_at }}
+      <small class="usa-hint">If going to DA, this is required.</small>
+      {% if form.da_due_at.errors %}<span class="usa-error-message">{{ form.da_due_at.errors.0 }}</span>{% endif %}
+    </div>
+  </fieldset>
+
+  <button class="usa-button" type="submit">Create Case</button>
+  <a class="usa-button usa-button--outline" href="{% url 'dashboard' %}">Cancel</a>
+</form>
+{% endblock %}
